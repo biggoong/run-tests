@@ -1,3 +1,5 @@
+Running some tests by clickiing an button, and see the result of tests.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Run project
