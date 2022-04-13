@@ -1,24 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useReducer, useCallback } from 'react';
+import TestCard from './components/TestCard';
+import Header from './components/Header';
+import { testReducer, ActionTypes } from './reducer';
+import { initialState } from './initialState';
 import './App.css';
 
 function App() {
+  const [state, dispatch] = useReducer(testReducer, initialState);
+
+  const handleRunTests = () => dispatch({
+    type: ActionTypes.RUN_TESTS,
+    payload: {
+      onUpdate: () => dispatch({ type: ActionTypes.UPDATE_TEST })
+    }
+  });
+
+  const handleClearTetst = () => dispatch({
+    type: ActionTypes.CLEAR_TESTS,
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header
+        onRunTest={handleRunTests}
+        disableRunButton={state.isRunning}
+        onClearButton={handleClearTetst}
+        disableClearButton={!!state.notStarted}
+        notStarted={state.notStarted}
+        passed={state.passed}
+        failed={state.failed}
+      />
+
+      <section>
+        {initialState.tests.map(test => {
+          const { description, running, passed } = state.tests.find(el => el.id === test.id) ?? test;
+
+          return (
+            <TestCard
+              key={test.id}
+              description={description}
+              running={running}
+              passed={passed}
+            />
+          )
+        })}
+      </section>
     </div>
   );
 }
